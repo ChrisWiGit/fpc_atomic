@@ -1,0 +1,399 @@
+/* Path: public/style.css */
+#game {
+  display: flex;
+  flex-direction: row; /* Behält die Kinder nebeneinander */
+  justify-content: center;
+  align-items: start; /* Ändern Sie center zu start, um oben zu beginnen */
+  margin-top: 20px;
+}
+
+/* unterhalb des Spielfelds */
+#board-and-states-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin-right: 20px; /* Optional, für Abstand zwischen Spielbrett und Bar */
+}
+
+/* div rechts oben von gameboard setzen */
+#bar {
+  /* Behält die ursprünglichen Stile, passt aber die Ausrichtung an */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline;
+  margin-left: 20px; /* Optional, je nachdem, wie viel Abstand Sie möchten */
+}
+
+
+#gameboard {
+  display: grid;
+  grid-template-columns: repeat(15, 40px); /* Korrigieren Sie 0fr zu 50px oder einer anderen gewünschten Zellbreite */
+  grid-template-rows: repeat(11, 36px); /* Korrigieren Sie 0fr zu 50px oder einer anderen gewünschten Zellhöhe */
+  grid-gap: 0px 0px; /* Optional: Abstand zwischen den Zellen */
+
+  padding-left: 17px;
+  padding-top: 17px;
+  padding-bottom: 17px;
+  padding-right: 20px;
+
+  background-image: url(../images/field.png);
+  background-repeat: no-repeat;
+  background-position: 0px -47px;
+  background-size: 100%;
+}
+
+
+button {
+  padding: 10px 20px;
+  /* font-size: 20px; */
+  cursor: pointer;
+  margin-bottom: 20px;
+  width: 120px;
+
+}
+
+div.cell.wrapper {
+  position: relative;
+
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 36px;
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+div .cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+div .cell.blank {
+  background-color: transparent;
+}
+
+div .cell.any.brick {
+  background-image: url(../images/brick.png);
+}
+
+div .cell.solid {
+  background-image: url(../images/solid.png);
+}
+
+div .cell.hole {
+  background-image: url(../images/hole.png);
+}
+
+div .cell.tramp {
+  /* 4 multipel kreise ineinandere von 100%, 70%, 50%, 30%, 
+    transparent 100% und schwarze linie
+   */
+   background-image: radial-gradient(circle, 
+   transparent 7px, #ffffff 7px, #fff 8px, transparent 8px, 
+   transparent 12px, #fff 12px, #fff 13px, transparent 13px,
+   transparent 17px, #fff 17px, #fff 18px, transparent 18px);
+}
+
+div .cell.conveyorUp:after {
+  color: #417eb0;
+  content: "▲";  
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+div .cell.conveyorDown:after {
+  color: #417eb0;
+  content: "▼";  
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+div .cell.conveyorLeft:after {
+  color: #417eb0;
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+  content: "◀";
+}
+
+div .cell.conveyorRight:after {
+  color: #417eb0;
+  content: "▶";
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+
+
+
+div .cell.arrowUp:after {
+  color: #e84514;
+  content: "↑";
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+div .cell.arrowDown:after {
+  color: #e84514;
+  content: "↓";
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+div .cell.arrowLeft:after {
+  color: #e84514;
+  content: "←";
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+div .cell.arrowRight:after {
+  color: #e84514;
+  content: "→";
+  font-size: 20px;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+div .cell.flame:after {
+  color: #ffcc00;
+  content: "∿";
+  font-size: xx-large;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+div .cell.extraBomb {
+  background-image: url(../images/powbomb.png);
+}
+
+div .cell.longerFlame {
+  background-image: url(../images/powflame.png);
+}
+
+div .cell.goldflame {
+  background-image: url(../images/powgold.png);
+}
+
+div .cell.extraSpeed {
+  background-image: url(../images/powskate.png);
+}
+
+div .cell.kick {
+  background-image: url(../images/powkick.png);}
+
+
+div .cell.spooger {
+  background-image: url(../images/powspoog.png);
+}
+
+div .cell.punch {
+  background-image: url(../images/powpunch.png);
+}
+
+div .cell.grab {
+  background-image: url(../images/powgrab.png);
+}
+
+div .cell.trigger {
+  background-image: url(../images/powtrig.png);
+}
+
+div .cell.jelly {
+  background-image: url(../images/powjelly.png);
+}
+
+div .cell.random {
+  background-image: url(../images/powrand.png);
+}
+
+div .cell.slow {
+  background-image: url(../images/powslow.png);
+}
+
+div .cell.disease {
+  background-image: url(../images/powdisea.png);
+}
+
+div .cell.badDisease {
+  background-image: url(../images/powebola.png);
+}
+
+
+
+
+
+
+/*div unterhalb von game ausgeben*/
+#states {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+#internal-data {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-left: 20px;
+  font-family: monospace;
+}
+
+#data {
+  font-size: 20px;
+}
+
+div .cell.any.player {
+  color: #fff;
+
+  background-image: url(../images/player.png);
+  /*50x69*/
+  background-repeat: no-repeat;
+  background-position: 0px 0px;
+  background-position: 50% 50%;
+  background-size: 50%;
+}
+
+div .cell.any.player-number:before {
+  font-size: 20px;
+  color: #fff;
+  /* font mit border */
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+
+div .cell.any.player0:before {  
+  content: "0";
+}
+
+div .cell.any.player1:before {  
+  content: "1";
+}
+
+div .cell.any.player2:before {
+  content: "2";
+}
+
+div .cell.any.player3:before {
+  content: "3";
+}
+
+div .cell.any.player4:before {
+  content: "4";
+}
+
+div .cell.any.player5:before {
+  content: "5";
+}
+
+div .cell.any.player6:before {
+  content: "6";
+}
+
+div .cell.any.player7:before {
+  content: "7";
+}
+
+div .cell.any.player8:before {
+  content: "8";
+}
+
+div .cell.any.player8:before {
+  content: "9";
+}
+
+div .cell.bomb {
+  background-image: url(../images/bombsingle.png);
+}
+
+div .overlay.overlay-danger {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 0, 0, 0.25);
+}
+
+div .cell.any.bomb-number:before {
+  font-size: 20px;
+  color: #fff;
+  /* font mit border */
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+}
+
+div .cell.bomb0:after {
+  content: "0";
+}
+
+div .cell.bomb1:after {
+  content: "1";
+} 
+
+div .cell.bomb2:after {
+  content: "2";
+}
+
+div .cell.bomb3:after {
+  content: "3";
+}
+
+div .cell.bomb4:after {
+  content: "4";
+}
+
+div .cell.bomb5:after {
+  content: "5";
+}
+
+div .cell.bomb6:after {
+  content: "6";
+}
+
+div .cell.bomb7:after {
+  content: "7";
+}
+
+div .cell.bomb8:after {
+  content: "8";
+}
+
+div .cell.bomb8:after {
+  content: "9";
+}
+
+.checkboxes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+
+
+/*
+<div class="checkboxes">
+        <label for="player-toggle" id="player-label">
+          <input type="checkbox" id="player-toggle" name="player" value="0">Spieler setzen (0-9)
+        </label>
+
+        <label for="field-toggle" id="field-label">
+          <input type="checkbox" id="field-toggle" name="field" value="0">Feld setzen (Strg+Klick oder Strg+Shift)
+        </label>
+
+        <label for="bomb-toggle" id="bomb-label">
+          <input type="checkbox" id="bomb-toggle" name="bomb" value="0">Bombe setzen (Alt+0-9)
+        </label>
+        <label for="clear-toggle" id="clear-label">
+          <input type="checkbox" id="clear-toggle" name="clear" value="0">Feld löschen (c)
+        </label>
+        </div>
+  */

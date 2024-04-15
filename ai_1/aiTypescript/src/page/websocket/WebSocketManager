@@ -1,0 +1,57 @@
+import WebSocketConnection, { WebSocketInitMessage, WebSocketMessageInterface } from "./WebSocketConnection"
+import JsonWebSocketConnection from "./JsonWebSocketConnection"
+
+
+export interface WebSocketInterface {
+  connect(): Promise<WebSocketInterface>
+  onMessage(event: MessageEvent<any>): void  
+
+}
+
+/**
+ * 1. Versucht eine WebScript Verbindung nach localhost:4567 aufzubauen.
+ * 2. Die Erste Nachricht die gesendet wird, ist eine Versionsnummer und der Nachrichtentyp JSON oder BINARY
+ * 2. Wenn die Verbindung erfolgreich war, kann ein Client von seiner Seite ein TAiInfo Objekt senden
+ *    a) welches Format das hat, bestimmt der ausgehandelte Nachrichtentyp.
+ * 3. Der Server kann auch ein TAiInfo Objekt senden.  
+ *    a) durch eine Methode
+ *    b) durch Anfordern des Clients
+ */
+export default class WebSocketManager implements WebSocketInitMessage {
+  static instance : WebSocketManager = new WebSocketManager();
+
+  static async connect(port: number = 4567, host: string = 'localhost'): Promise<WebSocketMessageInterface> {
+
+    return new WebSocketConnection(host, port).connect(WebSocketManager.instance);
+  }
+
+  constructor() {
+
+  }
+
+  async initMessage(socket: WebSocket, event: MessageEvent<any>, {host, port}: {host: string, port: number}): Promise<WebSocketMessageInterface> {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+      throw new Error('socket is not initialized or not open')
+    }
+
+    const protocol = socket.protocol;
+    const data : string = event.data
+    const version = data;
+
+    if (version !== '1') {
+      throw new Error('unsupported version')
+    }
+
+    let newWebSocketConnection : WebSocketMessageInterface;
+
+    if (protocol === 'application/json') {
+      newWebSocketConnection = new JsonWebSocketConnection(socket, host, port)
+    } else if (protocol === 'application/octet-stream') {
+      throw new Error('unsupported format')
+    } else {
+      throw new Error('unsupported format')
+    }
+
+    return newWebSocketConnection
+  }
+}

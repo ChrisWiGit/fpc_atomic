@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Bomberman KI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="game">
+    <div id="board-and-states-wrapper">
+      <div id="gameboard">
+        <!-- Zellen des Spielbretts -->
+      </div>
+      <div id="states">
+        <pre id="data"></pre>
+      </div>
+      <div id="internal">
+        <label for="data-toggle" id="data-label">
+          <input type="checkbox" id="data-toggle" name="data" value="0" checked="checked">Interne daten anzeigen
+        </label>
+        <pre id="internal-data"></pre>
+      </div>
+    </div>
+    <div id="bar">
+      <button id="Neues Feld" onclick="pageInstance.newGame()">Neu</button>
+      <button id="step" onclick="pageInstance.step()">Schritt</button>
+
+      <div id="save-load">
+        <div>
+          <label for="auto-save" id="auto-save-label">
+            <input type="checkbox" id="auto-save" name="autoSave" value="0" checked="checked"
+              onclick="pageInstance.setAutoSave()">Auto-Save
+          </label>
+        </div>
+        <div>
+          <input list="save-states" name="saveStates" id="save-state-name">
+          <button id="save" class="save-load" onclick="pageInstance.saveToLocalStorage()">Speichern</button>
+        </div>
+
+        <div>
+          <select id="save-states-list">
+            <option value="0">Laden</option>
+          </select>
+          <button id="load" class="save-load" onclick="pageInstance.loadFromSave()">Laden</button>
+        </div>
+      </div>
+
+      <div class="information">
+        <div id="mouse-position"></div>
+        <div id="field-content"></div>
+      </div>
+
+      <div class="checkboxes-overlay">
+        <label for="overlay-toggle" id="player-label">
+          <input type="checkbox" id="overlay-toggle" name="overlay" value="0" onclick="pageInstance.toggleOverlays()">Overlays anzeigen
+        </label>
+      </div>
+
+      <div class="checkboxes">
+        <label for="player-toggle" id="player-label">
+          <input type="checkbox" id="player-toggle" name="player" value="0" disabled>Spieler setzen (0-9)
+        </label>
+
+        <label for="field-toggle" id="field-label">
+          <input type="checkbox" id="field-toggle" name="field" value="0"
+            onclick="pageInstance.setKeysFromCheckbox()">Feld toggeln (Strg+Klick oder Strg+Shift)
+        </label>
+
+        <label for="bomb-toggle" id="bomb-label">
+          <input type="checkbox" id="bomb-toggle" name="bomb" value="0" disabled>Bombe setzen (Alt+0-9)
+        </label>
+        <label for="clear-toggle" id="clear-label">
+          <input type="checkbox" id="clear-toggle" name="clear" value="0"
+            onclick="pageInstance.setKeysFromCheckbox()">Feld löschen (c)
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+  <script src="init.js"></script>
+</body>
+
+</html>
