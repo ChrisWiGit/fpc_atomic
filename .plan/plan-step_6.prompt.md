@@ -81,7 +81,8 @@ Score-Komponenten (beispielhafte Struktur):
 - insgesamt maximal BeamWidth Zustaende behalten.
 
 4. Tie-Breaking
-- deterministisch via Seed + feste Ordnungsregeln.
+- Bei exakt gleichem Score 50:50 Entscheidung über injiziertes `IRandom`.
+- Damit bleibt der Tie-Break reproduzierbar testbar, wenn ein deterministischer `IRandom` in Tests verwendet wird.
 
 ### Debug/Metriken (Pflichtfelder)
 

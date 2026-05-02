@@ -80,20 +80,43 @@ Ziel ist die Ablösung der TypeScript/WebSocket-Kette durch eine native Lazarus-
 
 **Strength-Profil-Tabelle (Startwerte, fuer Schritt 7 Mapping)**
 
-Die erste Version nutzt ein bereichsbasiertes Profilmodell mit optionaler linearer Interpolation zwischen den Stützpunkten.
+Die erste Version nutzt ein bereichsbasiertes Profilmodell mit optionaler linearer Interpolation zwischen den Stützpunkten. Diese Tabelle definiert die Beam-Search-Konfiguration; die Powerup-Konfiguration wird separat gehalten, damit spätere Policy-Implementierungen austauschbar bleiben.
 
-| Strength-Bereich | BeamTiefe | BeamBreite | RisikoGewicht | KrankheitsMalus | BombenAggressivitaet |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| 0-33 | 5 | 24 | 1.8 | 3.0 | 0.2 |
-| 34-66 | 8 | 48 | 1.2 | 2.2 | 0.4 |
-| 67-100 | 11 | 80 | 0.9 | 1.6 | 0.6 |
+| Strength-Bereich | BeamTiefe | BeamTiefeJitter | BeamBreite | RisikoGewicht | KrankheitsMalus | BombenAggressivitaet |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 0-33 | 5 | ±2 | 24 | 1.8 | 3.0 | 0.2 |
+| 34-66 | 8 | ±2 | 48 | 1.2 | 2.2 | 0.4 |
+| 67-100 | 11 | ±2 | 80 | 0.9 | 1.6 | 0.6 |
 
 Definitionen:
 - `RisikoGewicht`: Multiplikator fuer Gefahrenkosten (hoeher = vorsichtiger).
 - `KrankheitsMalus`: Zusatzmalus fuer negative Felder (`fSlow`, `fDisease`, `fBadDisease`, ggf. `fRandom`).
 - `BombenAggressivitaet`: Gewicht fuer offensive Bombenentscheidungen (in der ersten Version nur defensiv wirksam).
+- `BeamTiefeJitter`: zufälliger Offset, der gelegentlich zur maximalen Suchtiefe addiert oder subtrahiert wird. Dies sorgt für mehr Variation und verhindert zu deterministisches Verhalten.
+- `BeamBreite`: Anzahl der besten Kandidaten, die in jeder Suchstufe weiterverfolgt werden. Größere Werte erlauben eine breitere Suche; kleinere Werte reduzieren die Laufzeit und machen die KI fokussierter.
 
-Powerup-Basiswerte pro Typ (gemeinsame Tabelle im Code):
+**Powerup-Konfiguration (separate Tabelle / separater Policy-Typ)**
+
+Die Powerup-Logik sollte unabhängig von der Beam-Konfiguration bleiben, damit spätere Änderungen über neue Implementierungen oder Dateilade-Mechanismen erfolgen können.
+
+Beispielelemente:
+- `PowerupChancePerType`: Wahrscheinlichkeit, dass ein Powerup-Typ als Ziel in die Suche aufgenommen wird. Diese Wahrscheinlichkeit kann durch AI-spezifische Faktoren (z.B. Jelly bereits aufgenommen) oder situative Faktoren (z.B. Nähe zu Gegnern) modifiziert oder sogar ignoriert werden.
+- `PowerupWeightPerType`: Basisgewicht für die relative Attraktivität eines Items. Kann durch AI-spezifische Faktoren (z.B. bereits vorhandene Fähigkeiten) oder situative Faktoren (z.B. Risiko durch Gegner) modifiziert werden.
+- optional: `StrengthModifier`, um die Chance je nach `Strength` anzupassen
+
+Beispielwerte:
+- `PowerupChance[fExtraBomb] = 0.90`
+- `PowerupChance[fLongerFlame] = 0.80`
+- `PowerupChance[fGoldflame] = 0.75`
+- `PowerupChance[fExtraSpeed] = 0.65`
+- `PowerupChance[fKick] = 0.40`
+- `PowerupChance[fSpooger] = 0.30`
+- `PowerupChance[fPunch] = 0.30`
+- `PowerupChance[fGrab] = 0.20`
+- `PowerupChance[fTrigger] = 0.25`
+- `PowerupChance[fJelly] = 0.15`
+
+Powerup-Basisgewichte pro Typ:
 - `fExtraBomb`: 1.00
 - `fLongerFlame`: 0.80
 - `fGoldflame`: 1.10
@@ -105,6 +128,43 @@ Powerup-Basiswerte pro Typ (gemeinsame Tabelle im Code):
 - `fTrigger`: 0.15
 - `fJelly`: 0.10
 
+Diese Konfiguration kann später aus einer Datei geladen werden. Die Architektur sollte daher auf Schnittstellen/abstrakte Basisklassen setzen, z. B.:
+- `IBeamConfig` / `TBeamConfig`
+- `IPowerupPolicy` / `TPowerupPolicy`
+- `TDefaultBeamConfig`, `TDefaultPowerupPolicy`
+- `TFileBasedBeamConfig`, `TFileBasedPowerupPolicy`
+
+Damit wird es möglich, später neue Implementierungen mit anderen Werten oder Ladeformaten einzuführen, ohne die Beam-Core-Logik zu ändern.
+
 Interpolationsregel (optional, empfohlen):
 - Zwischen zwei Bereichen werden Werte linear gemischt, um harte Verhaltensspruenge zu vermeiden.
 - Formel: `Wert = WertA + t * (WertB - WertA)`, mit `t` in `[0..1]`.
+
+**Decision Rules (verbindlich fuer Implementierung V1)**
+
+1. Survival-Hard-Filter
+   - Es werden nur Kandidaten weiterverfolgt, die nicht unmittelbar in einen tödlichen Zustand führen.
+
+2. Situative Hard-Constraints
+   - Harte Verbote/Erzwingungen (z. B. nur ein Fluchtweg, akute Bombengefahr, unpassierbare Felder) werden vor jeder Powerup-Bewertung angewendet.
+
+3. PowerupChance-Gate
+   - Pro Powerup-Typ wird zuerst die effektive Chance berechnet.
+   - Formel: `P_eff = clamp(P_base * M_strength * M_context, 0, 1)`.
+   - Die Entscheidung erfolgt über `IRandom` als Bernoulli-Draw.
+
+4. Scoring
+   - Nur Kandidaten, die das Chance-Gate passieren, werden im Score verglichen.
+   - `PowerupWeightPerType` wirkt im Scoring als Attraktivitätsfaktor relativ zu anderen Zielen.
+
+5. Deterministischer Tie-Break ersetzt durch 50:50 Zufall
+   - Bei exakt gleichem Score wird per `IRandom` mit `50:50` entschieden.
+   - Damit bleibt die Entscheidung reproduzierbar testbar, wenn ein deterministischer `IRandom` in Tests injiziert wird.
+
+**Festlegungen aus den offenen Punkten**
+
+- `IRandom` wird per Dependency Injection eingebunden.
+- Für Tests sind feste/deterministische `IRandom`-Implementierungen vorgesehen.
+- In Produktion wird `IRandom` einmalig beim KI-Start initialisiert (Standard-Lazarus-Randomquelle).
+- Dateibasierte Konfiguration (z. B. INI) kommt später als zusätzliche Implementierung hinter Factory-Umschaltung.
+- `Strength` wird auf den gültigen Bereich geklemmt; `Strength >= 100` entspricht der stärksten KI.

@@ -30,6 +30,7 @@ Type
     MaxDepth: Integer;
     NodeBudget: Integer;
     TimeBudgetMs: Integer;
+    // Optional: Seed zur Initialisierung eines testbaren IRandom-Implementierung.
     RandomTieBreakerSeed: UInt32;
     EnableOpponentPrediction: Boolean;
     EnableFirstMovePruning: Boolean;
@@ -157,7 +158,7 @@ Validierung:
 
 ### Determinismus und Stabilitaet
 
-1. Tie-Breaking erfolgt ueber festen Seed in Config.
+1. Tie-Breaking erfolgt ueber injiziertes `IRandom` mit 50:50-Entscheidung bei gleichem Score; zur Testbarkeit kann ein deterministischer `IRandom` verwendet werden.
 2. Reihenfolge der Kandidatengenerierung ist fest definiert.
 3. Hashing und Selektion sind deterministisch implementiert.
 4. Bei Budget- oder Simulationsfehlern wird ein sicherer Fallback geliefert.
