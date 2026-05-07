@@ -1,0 +1,7 @@
+# Golden snapshot format v1
+# key=value lines, UTF-8 text
+snapshotVersion=1
+focusPlayerIndex=0
+strength=50
+expectedAction=apNone
+expectedMove=amNone
