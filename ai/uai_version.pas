@@ -1,6 +1,6 @@
 (******************************************************************************)
 (*                                                                            *)
-(* Author      : Uwe Schaechterle (Corpsman)                                  *)
+(* Author      : GitHub Copilot                                               *)
 (*                                                                            *)
 (* This file is part of FPC_Atomic                                            *)
 (*                                                                            *)
@@ -12,34 +12,15 @@
 (*               source file of the project.                                  *)
 (*                                                                            *)
 (******************************************************************************)
-Program ai_tests;
+Unit uai_version;
 
 {$MODE ObjFPC}{$H+}
 
-Uses
-  Classes,
-  SysUtils,
-  fpcunit,
-  testregistry,
-  consoletestrunner,
-  test_uatomicai_basic,
-  test_uai_runtime_contract,
-  test_ubeam_api_basic,
-  test_uai_adapter_mapping,
-  test_ubeam_movement,
-  test_ubeam_search,
-  test_dll_contract_exports,
-  test_replay_golden_format;
+Interface
 
-Var
-  Runner: TTestRunner;
+Const
+      AiVersionText = 'Atomic Beam AI Version 0.00';
 
-Begin
-  Runner := TTestRunner.Create(Nil);
-  try
-    Runner.Initialize;
-    Runner.Run;
-  finally
-    Runner.Free;
-  end;
+Implementation
+
 End.

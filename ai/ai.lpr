@@ -18,26 +18,18 @@ Library ai;
 
 Uses
   Classes
-  , uai_types, uatomicai, ctypes;
-
-Var
-  ais: Array[0..9] Of TAtomicAi;
+  , uai_types
+  , uai_runtime
+  , uai_version
+  , ctypes;
 
   (*
    * Initialize the Lib
    *)
 
 Function AiInit(): cbool; cdecl;
-Var
-  i: Integer;
 Begin
-  result := true;
-  (*
-   * Put your implementation here...
-   *)
-  For i := 0 To high(ais) Do Begin
-    ais[i] := TAtomicAi.Create(i);
-  End;
+  Result := InitializeAgents();
 End;
 
 (*
@@ -45,16 +37,8 @@ End;
  *)
 
 Procedure AiDeInit(); cdecl;
-Var
-  i: Integer;
 Begin
-  (*
-   * Put your implementation here...
-   *)
-  For i := 0 To high(ais) Do Begin
-    ais[i].Free;
-    ais[i] := Nil;
-  End;
+  FinalizeAgents();
 End;
 
 (*
@@ -75,10 +59,7 @@ End;
 
 Function AiVersion(): pchar; cdecl;
 Begin
-  (*
-   * Put your implementation here...
-   *)
-  result := pchar(Ai_Version);
+  Result := pchar(AiVersionText);
 End;
 
 (*
@@ -87,15 +68,8 @@ End;
  *)
 
 Procedure AiNewRound(Strength: cuint8); cdecl;
-Var
-  i: Integer;
 Begin
-  (*
-   * Put your implementation here...
-   *)
-  For i := 0 To high(ais) Do Begin
-    ais[i].Reset(Strength);
-  End;
+  StartNewRound(Strength);
 End;
 
 (*
@@ -104,7 +78,7 @@ End;
 
 Function AiHandlePlayer(PlayerIndex: cuint32; Var AiInfo: TAiInfo): TAiCommand; cdecl;
 Begin
-  result := ais[PlayerIndex].CalcAiCommand(AiInfo);
+  Result := HandlePlayerCommand(PlayerIndex, AiInfo);
 End;
 
 Exports

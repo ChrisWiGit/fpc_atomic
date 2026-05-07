@@ -19,7 +19,7 @@ Unit uatomicai;
 Interface
 
 Uses
-  Classes, SysUtils, uai_types, ufifo;
+  Classes, SysUtils, uai_types, uai_version, ufifo;
 
 Const
   (*
@@ -37,7 +37,7 @@ Const
    *             0.07 - FIX: take solid bricks into account, when searching for destroyable bricks
    *                    FIX: don't get stuck on a hole if there are no more destroyable bricks
    *)
-  Ai_Version = 'Atomic ai ver. 0.07 by Corpsman';
+  Ai_Version = AiVersionText;
 
   (*
    * Powerups the AI want to collect

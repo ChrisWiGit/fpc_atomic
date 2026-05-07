@@ -1,6 +1,6 @@
 (******************************************************************************)
 (*                                                                            *)
-(* Author      : Uwe Schaechterle (Corpsman)                                  *)
+(* Author      : GitHub Copilot                                               *)
 (*                                                                            *)
 (* This file is part of FPC_Atomic                                            *)
 (*                                                                            *)
@@ -12,34 +12,44 @@
 (*               source file of the project.                                  *)
 (*                                                                            *)
 (******************************************************************************)
-Program ai_tests;
+Unit ubeam_opponent_model;
 
 {$MODE ObjFPC}{$H+}
 
+Interface
+
 Uses
-  Classes,
-  SysUtils,
-  fpcunit,
-  testregistry,
-  consoletestrunner,
-  test_uatomicai_basic,
-  test_uai_runtime_contract,
-  test_ubeam_api_basic,
-  test_uai_adapter_mapping,
-  test_ubeam_movement,
-  test_ubeam_search,
-  test_dll_contract_exports,
-  test_replay_golden_format;
+      ubeam_types;
 
+Function BuildDefaultOpponentPlans(Const State: TBeamInputState): TPredictedOpponentPlanArray;
+
+Implementation
+
+Function BuildDefaultOpponentPlans(Const State: TBeamInputState): TPredictedOpponentPlanArray;
 Var
-  Runner: TTestRunner;
-
+      I: Integer;
+      Plan: TPredictedOpponentPlan;
+      Plans: TPredictedOpponentPlanArray;
 Begin
-  Runner := TTestRunner.Create(Nil);
-  try
-    Runner.Initialize;
-    Runner.Run;
-  finally
-    Runner.Free;
-  end;
+      SetLength(Plans, 0);
+
+      For I := 0 To High(State.Players) Do
+      Begin
+            If State.Players[I].PlayerIndex = State.FocusPlayerIndex Then
+            Begin
+                  Continue;
+            End;
+
+            Plan.PlayerIndex := State.Players[I].PlayerIndex;
+            SetLength(Plan.Actions, 1);
+            Plan.Actions[0].Action := baNone;
+            Plan.Actions[0].Move := bmNone;
+
+            SetLength(Plans, Length(Plans) + 1);
+            Plans[High(Plans)] := Plan;
+      End;
+
+      Result := Plans;
+End;
+
 End.
