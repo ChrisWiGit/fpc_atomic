@@ -614,6 +614,10 @@ Begin
     Game.Settings.Keys[ks0].AchsisIndex[1] := IniPropStorage1.readInteger('SDL_LeftRight', Game.Settings.Keys[ks0].AchsisIndex[1]);
     Game.Settings.Keys[ks0].AchsisIdle[1] := IniPropStorage1.readInteger('SDL_LeftRightIdle', Game.Settings.Keys[ks0].AchsisIdle[1]);
     Game.Settings.Keys[ks0].AchsisDirection[1] := IniPropStorage1.readInteger('SDL_LeftRightDirection', Game.Settings.Keys[ks0].AchsisDirection[1]);
+    Game.Settings.Keys[ks0].UseAnalogStick := IniPropStorage1.ReadBoolean('SDL_AnalogStick', Game.Settings.Keys[ks0].UseAnalogStick);
+    Game.Settings.Keys[ks0].UseHat := IniPropStorage1.ReadBoolean('SDL_Hat', Game.Settings.Keys[ks0].UseHat);
+    Game.Settings.Keys[ks0].UseHysteresis := IniPropStorage1.ReadBoolean('SDL_Hysteresis', Game.Settings.Keys[ks0].UseHysteresis);
+    Game.Settings.Keys[ks0].MappingVersion := IniPropStorage1.ReadInteger('SDL_MappingVersion', Game.Settings.Keys[ks0].MappingVersion);
   End;
   Game.Settings.Keys[ks1] := AtomicDefaultKeys(ks1);
   Game.Settings.Keys[ks1].UseSDL2 := IniPropStorage1.ReadBoolean('UseSDL2', Game.Settings.Keys[ks1].UseSDL2);
@@ -637,6 +641,10 @@ Begin
     Game.Settings.Keys[ks1].AchsisIndex[1] := IniPropStorage1.readInteger('SDL_LeftRight2', Game.Settings.Keys[ks1].AchsisIndex[1]);
     Game.Settings.Keys[ks1].AchsisIdle[1] := IniPropStorage1.readInteger('SDL_LeftRightIdle2', Game.Settings.Keys[ks1].AchsisIdle[1]);
     Game.Settings.Keys[ks1].AchsisDirection[1] := IniPropStorage1.readInteger('SDL_LeftRightDirection2', Game.Settings.Keys[ks1].AchsisDirection[1]);
+    Game.Settings.Keys[ks1].UseAnalogStick := IniPropStorage1.ReadBoolean('SDL_AnalogStick2', Game.Settings.Keys[ks1].UseAnalogStick);
+    Game.Settings.Keys[ks1].UseHat := IniPropStorage1.ReadBoolean('SDL_Hat2', Game.Settings.Keys[ks1].UseHat);
+    Game.Settings.Keys[ks1].UseHysteresis := IniPropStorage1.ReadBoolean('SDL_Hysteresis2', Game.Settings.Keys[ks1].UseHysteresis);
+    Game.Settings.Keys[ks1].MappingVersion := IniPropStorage1.ReadInteger('SDL_MappingVersion2', Game.Settings.Keys[ks1].MappingVersion);
   End;
   Game.Settings.ShowFPS := IniPropStorage1.ReadBoolean('ShowFPS', false);
   Game.Settings.CheckForUpdates := IniPropStorage1.ReadBoolean('CheckForUpdates', true);
@@ -708,6 +716,10 @@ Begin
   IniPropStorage1.WriteInteger('SDL_LeftRight', Game.Settings.Keys[ks0].AchsisIndex[1]);
   IniPropStorage1.WriteInteger('SDL_LeftRightIdle', Game.Settings.Keys[ks0].AchsisIdle[1]);
   IniPropStorage1.WriteInteger('SDL_LeftRightDirection', Game.Settings.Keys[ks0].AchsisDirection[1]);
+  IniPropStorage1.WriteBoolean('SDL_AnalogStick', Game.Settings.Keys[ks0].UseAnalogStick);
+  IniPropStorage1.WriteBoolean('SDL_Hat', Game.Settings.Keys[ks0].UseHat);
+  IniPropStorage1.WriteBoolean('SDL_Hysteresis', Game.Settings.Keys[ks0].UseHysteresis);
+  IniPropStorage1.WriteInteger('SDL_MappingVersion', Game.Settings.Keys[ks0].MappingVersion);
 
   IniPropStorage1.WriteInteger('KeyUp2', Game.Settings.Keys[ks1].KeyUp);
   IniPropStorage1.WriteInteger('KeyDown2', Game.Settings.Keys[ks1].KeyDown);
@@ -729,6 +741,10 @@ Begin
   IniPropStorage1.WriteInteger('SDL_LeftRight2', Game.Settings.Keys[ks1].AchsisIndex[1]);
   IniPropStorage1.WriteInteger('SDL_LeftRightIdle2', Game.Settings.Keys[ks1].AchsisIdle[1]);
   IniPropStorage1.WriteInteger('SDL_LeftRightDirection2', Game.Settings.Keys[ks1].AchsisDirection[1]);
+  IniPropStorage1.WriteBoolean('SDL_AnalogStick2', Game.Settings.Keys[ks1].UseAnalogStick);
+  IniPropStorage1.WriteBoolean('SDL_Hat2', Game.Settings.Keys[ks1].UseHat);
+  IniPropStorage1.WriteBoolean('SDL_Hysteresis2', Game.Settings.Keys[ks1].UseHysteresis);
+  IniPropStorage1.WriteInteger('SDL_MappingVersion2', Game.Settings.Keys[ks1].MappingVersion);
 
   IniPropStorage1.WriteBoolean('ShowFPS', Game.Settings.ShowFPS);
   IniPropStorage1.WriteBoolean('CheckForUpdates', Game.Settings.CheckForUpdates);
