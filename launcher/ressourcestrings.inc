@@ -63,6 +63,7 @@ Resourcestring
   R_AnalogStick = 'Use analog stick';
   R_UseHat = 'Use hat (D-Pad)';
   R_Hysteresis = 'Hysteresis (no flickering)';
+  R_DominantAxis = 'Diagonal: stronger axis wins';
   R_WizCaption = 'Set up controller';
   R_WizSelectTitle = 'Choose device';
   R_WizSelectHint = 'Choose the controller and how it should be used.';
@@ -90,7 +91,7 @@ Resourcestring
   R_WizWaitDirection = 'waiting for direction …';
   RF_WizAxis = 'axis %d';
   R_WizSameButton = 'This button is already the first action.';
-  R_WizDPadButton = 'The D-Pad is used for the directions.';
+  R_WizDPadButton = 'The D-Pad can not be used for actions, it is only used for the directions.';
   R_WizLive = 'Live view (to test)';
   R_WizBack = '< &Back';
   R_WizNext = '&Next >';

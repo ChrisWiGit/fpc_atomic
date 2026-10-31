@@ -77,12 +77,22 @@ Die Optionen gelten pro Spieler und lassen sich im Dialog jederzeit ändern, ohn
 | Analogstick verwenden | an | Gamecontroller | Zusätzlich zum Steuerkreuz steuert der linke Analogstick. |
 | Hat (Steuerkreuz) verwenden | an | Joystick | Zusätzlich zu den Achsen steuert der erste Hat (das Steuerkreuz vieler Joysticks). |
 | Hysterese (kein Flackern) | an | Stick und Achsen | siehe unten |
+| Diagonale: stärkere Achse gewinnt | an | Stick und Achsen | siehe unten |
 
 ### Hysterese
 
 Ein Stick zählt in einer Richtung als gedrückt, wenn er mindestens zu 25 % ausgelenkt ist. Hält man ihn genau an dieser Grenze, zittert der Wert darüber und darunter: Die Figur bekommt dann sehr schnell abwechselnd "gedrückt" und "losgelassen", sie stockt, und jedes Mal geht eine Nachricht an den Server.
 
 Mit Hysterese wird eine Richtung bei 25 % gedrückt, aber erst wieder losgelassen, wenn der Stick unter etwa 14 % zurück ist. Dazwischen bleibt der letzte Zustand, die Figur läuft gleichmäßig. Für das Steuerkreuz spielt die Option keine Rolle. Ausschalten muss man sie eigentlich nur, wenn man möchte, dass die Figur schon beim kleinsten Zurücknehmen des Sticks stehen bleibt.
+
+### Diagonale: stärkere Achse gewinnt
+
+Die Figur kann immer nur in eine Richtung laufen. Hält man den Stick schräg, sind aber zwei Richtungen "gedrückt", z. B. Runter und Rechts.
+
+- **Aus** (das alte Verhalten): Es gewinnt die Richtung, die zuletzt über die 25 %-Grenze gegangen ist. Wer beim Abbiegen den Stick schon etwas früh zur Seite drückt, biegt damit sofort ab, die Figur bleibt vor der Kreuzung an der Wand stehen.
+- **An**: Es zählt nur die Achse, die weiter ausgelenkt ist. Man läuft also weiter, bis der Stick mehr zur Seite als nach unten zeigt, und biegt erst dann ab. Damit die Richtung bei genau 45° nicht hin und her springt, behält die bisherige Achse die Richtung, bis die andere 25 % stärker ist.
+
+Für das Steuerkreuz und den Hat gilt die Option nicht, dort gibt es keine "stärkere" Richtung. Ausgegraut ist sie, wenn kein Stick bzw. keine Achse benutzt wird.
 
 ## Controller während des Spiels ein- und ausstecken
 
@@ -100,7 +110,7 @@ Controller einstecken und im Assistenten **Geräte aktualisieren** klicken. Fehl
 Die Reihenfolge, in der das Betriebssystem sie meldet. Im Assistenten sind sie durchnummeriert (#1, #2), im Dialog steht die Nummer hinter dem Namen.
 
 **Das Steuerkreuz wird bei "Erste Aktion" nicht angenommen.**
-Bei einem Gamecontroller ist das Steuerkreuz für die Richtungen da und kann keine Aktion sein.
+Bei einem Gamecontroller kann das Steuerkreuz nicht als Aktionstaste verwendet werden, es ist nur für die Richtungen da.
 
 **Wo wird das gespeichert?**
 In `fpc_atomic.cfg` im Konfigordner (Launcher: **Konfigordner**) (Schlüssel `UseSDL`, `SDL_...`, für Spieler 2 mit einer `2` am Ende).

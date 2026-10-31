@@ -77,12 +77,22 @@ The options are set per player and can be changed in the dialog at any time with
 | Use analog stick | on | gamecontroller | In addition to the D-Pad, the left analog stick controls the player. |
 | Use hat (D-Pad) | on | joystick | In addition to the axes, the first hat (the D-Pad of many joysticks) controls the player. |
 | Hysteresis (no flickering) | on | stick and axes | see below |
+| Diagonal: stronger axis wins | on | stick and axes | see below |
 
 ### Hysteresis
 
 A stick counts as pressed in a direction when it is moved at least 25 % out of the center. If you hold it exactly at this limit, the value jitters above and below it: the player then gets "pressed" and "released" in very quick succession, it stutters, and each time a message is sent to the server.
 
 With hysteresis a direction is pressed at 25 %, but only released when the stick is back below about 14 %. In between the last state is kept and the player walks smoothly. For the D-Pad the option makes no difference. You only need to turn it off if you want the player to stop at the slightest release of the stick.
+
+### Diagonal: stronger axis wins
+
+The player can only walk in one direction at a time. If you hold the stick diagonally, two directions are "pressed", e.g. down and right.
+
+- **Off** (the old behavior): the direction that crossed the 25 % limit last wins. If you push the stick sideways a little early when turning, the player turns at once and stops at the wall in front of the crossing.
+- **On**: only the axis that is moved further counts. You keep walking until the stick points more sideways than down, and only then turn. So that the direction does not jump back and forth at exactly 45°, the current axis keeps the direction until the other one is 25 % stronger.
+
+The option does not apply to the D-Pad and the hat, there is no "stronger" direction there. It is grayed out if no stick or axis is used.
 
 ## Plugging controllers in and out during the game
 
@@ -100,7 +110,7 @@ Plug in the controller and click **Refresh devices** in the wizard. If the SDL2 
 The order in which the operating system reports them. In the wizard they are numbered (#1, #2), in the dialog the number is shown after the name.
 
 **The D-Pad is not accepted as first action.**
-On a gamecontroller the D-Pad is used for the directions and can not be an action.
+On a gamecontroller the D-Pad can not be used for actions, it is only used for the directions.
 
 **Where is this stored?**
 In `fpc_atomic.cfg` in the config folder (launcher: **Config folder**), keys `UseSDL`, `SDL_...`, for player 2 with a `2` at the end.

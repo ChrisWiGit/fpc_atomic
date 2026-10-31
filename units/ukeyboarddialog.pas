@@ -37,7 +37,7 @@ Type
     PadPanel: TPanel;
     Status, Shared, Mapping, Directions: TLabel;
     Setup: TButton;
-    AnalogStick, Hat, Hysteresis: TCheckBox;
+    AnalogStick, Hat, Hysteresis, DominantAxis: TCheckBox;
   End;
 
   { TKeyboardDialog }
@@ -117,11 +117,12 @@ Const
   R_AnalogStick = 'Use analog stick';
   R_UseHat = 'Use hat (D-Pad)';
   R_Hysteresis = 'Hysteresis (no flickering)';
+  R_DominantAxis = 'Diagonal: stronger axis wins';
 {$ENDIF}
 
 Const
   BoxWidth = 320;
-  BoxHeight = 272;
+  BoxHeight = 296;
   Margin = 8;
   MaxNameLength = 28; // Längere Controller Namen werden gekürzt
 
@@ -196,6 +197,8 @@ Begin
   fkeys[ks].UseAnalogStick := fPlayer[ks].AnalogStick.Checked;
   fkeys[ks].UseHat := fPlayer[ks].Hat.Checked;
   fkeys[ks].UseHysteresis := fPlayer[ks].Hysteresis.Checked;
+  fkeys[ks].UseDominantAxis := fPlayer[ks].DominantAxis.Checked;
+  UpdateControls; // Ob die Diagonale greift, hängt am Analogstick
 End;
 
 Procedure TKeyboardDialog.OnStatusTimer(Sender: TObject);
@@ -358,6 +361,7 @@ Begin
     fPlayer[ks].AnalogStick.Caption := Hotkey(fPlayer[ks].AnalogStick.Caption);
     fPlayer[ks].Hat.Caption := Hotkey(fPlayer[ks].Hat.Caption);
     fPlayer[ks].Hysteresis.Caption := Hotkey(fPlayer[ks].Hysteresis.Caption);
+    fPlayer[ks].DominantAxis.Caption := Hotkey(fPlayer[ks].DominantAxis.Caption);
   End;
   Button3.Caption := Hotkey(Button3.Caption);
   Button2.Caption := Hotkey(Button2.Caption);
@@ -499,6 +503,14 @@ Begin
     // Was für den Gerätetyp nicht greift, wird nur ausgegraut, damit man sieht, dass es die Option gibt
     fPlayer[ks].AnalogStick.Enabled := fkeys[ks].IsGameController;
     fPlayer[ks].Hat.Enabled := Not fkeys[ks].IsGameController;
+    // Die Diagonale gibt es nur, wenn ein Stick oder Achsen benutzt werden
+    fPlayer[ks].DominantAxis.Checked := fkeys[ks].UseDominantAxis;
+    If fkeys[ks].IsGameController Then Begin
+      fPlayer[ks].DominantAxis.Enabled := fkeys[ks].UseAnalogStick;
+    End
+    Else Begin
+      fPlayer[ks].DominantAxis.Enabled := fkeys[ks].AchsisIndex[0] >= 0;
+    End;
   End;
   UpdateStatus;
   AssignHotkeys;
@@ -519,8 +531,21 @@ Begin
   For ks In TKeySet Do Begin
     With fPlayer[ks] Do Begin
       Box.TabOrder := ord(ks);
-      Keyboard.TabOrder := 0;
-      Controller.TabOrder := 1;
+      (*
+       * Nur der gewählte Radiobutton ist per Tab erreichbar (zwischen beiden wechseln die Pfeiltasten).
+       * Unter Windows wird ein Radiobutton gewählt, sobald er den Fokus bekommt, der nicht gewählte darf ihn also
+       * nie automatisch bekommen (z.B. beim Anzeigen), sonst würde der Spieler umgeschaltet.
+       *)
+      Keyboard.TabStop := Keyboard.Checked;
+      Controller.TabStop := Controller.Checked;
+      If Controller.Checked Then Begin
+        Controller.TabOrder := 0;
+        Keyboard.TabOrder := 1;
+      End
+      Else Begin
+        Keyboard.TabOrder := 0;
+        Controller.TabOrder := 1;
+      End;
       KeyPanel.TabOrder := 2;
       PadPanel.TabOrder := 3;
       For i := 0 To 5 Do Begin
@@ -530,6 +555,7 @@ Begin
       AnalogStick.TabOrder := 1;
       Hat.TabOrder := 2;
       Hysteresis.TabOrder := 3;
+      DominantAxis.TabOrder := 4;
     End;
   End;
   Button3.TabOrder := 2;
@@ -663,6 +689,7 @@ Constructor TKeyboardDialog.CreateNew(AOwner: TComponent; Num: Integer);
       AnalogStick := CreateCheckBox(PadPanel, R_AnalogStick, 144, aKeySet);
       Hat := CreateCheckBox(PadPanel, R_UseHat, 168, aKeySet);
       Hysteresis := CreateCheckBox(PadPanel, R_Hysteresis, 192, aKeySet);
+      DominantAxis := CreateCheckBox(PadPanel, R_DominantAxis, 216, aKeySet);
     End;
   End;
 

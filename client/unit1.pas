@@ -617,6 +617,7 @@ Begin
     Game.Settings.Keys[ks0].UseAnalogStick := IniPropStorage1.ReadBoolean('SDL_AnalogStick', Game.Settings.Keys[ks0].UseAnalogStick);
     Game.Settings.Keys[ks0].UseHat := IniPropStorage1.ReadBoolean('SDL_Hat', Game.Settings.Keys[ks0].UseHat);
     Game.Settings.Keys[ks0].UseHysteresis := IniPropStorage1.ReadBoolean('SDL_Hysteresis', Game.Settings.Keys[ks0].UseHysteresis);
+    Game.Settings.Keys[ks0].UseDominantAxis := IniPropStorage1.ReadBoolean('SDL_DominantAxis', Game.Settings.Keys[ks0].UseDominantAxis);
     Game.Settings.Keys[ks0].MappingVersion := IniPropStorage1.ReadInteger('SDL_MappingVersion', Game.Settings.Keys[ks0].MappingVersion);
   End;
   Game.Settings.Keys[ks1] := AtomicDefaultKeys(ks1);
@@ -644,6 +645,7 @@ Begin
     Game.Settings.Keys[ks1].UseAnalogStick := IniPropStorage1.ReadBoolean('SDL_AnalogStick2', Game.Settings.Keys[ks1].UseAnalogStick);
     Game.Settings.Keys[ks1].UseHat := IniPropStorage1.ReadBoolean('SDL_Hat2', Game.Settings.Keys[ks1].UseHat);
     Game.Settings.Keys[ks1].UseHysteresis := IniPropStorage1.ReadBoolean('SDL_Hysteresis2', Game.Settings.Keys[ks1].UseHysteresis);
+    Game.Settings.Keys[ks1].UseDominantAxis := IniPropStorage1.ReadBoolean('SDL_DominantAxis2', Game.Settings.Keys[ks1].UseDominantAxis);
     Game.Settings.Keys[ks1].MappingVersion := IniPropStorage1.ReadInteger('SDL_MappingVersion2', Game.Settings.Keys[ks1].MappingVersion);
   End;
   Game.Settings.ShowFPS := IniPropStorage1.ReadBoolean('ShowFPS', false);
@@ -719,6 +721,7 @@ Begin
   IniPropStorage1.WriteBoolean('SDL_AnalogStick', Game.Settings.Keys[ks0].UseAnalogStick);
   IniPropStorage1.WriteBoolean('SDL_Hat', Game.Settings.Keys[ks0].UseHat);
   IniPropStorage1.WriteBoolean('SDL_Hysteresis', Game.Settings.Keys[ks0].UseHysteresis);
+  IniPropStorage1.WriteBoolean('SDL_DominantAxis', Game.Settings.Keys[ks0].UseDominantAxis);
   IniPropStorage1.WriteInteger('SDL_MappingVersion', Game.Settings.Keys[ks0].MappingVersion);
 
   IniPropStorage1.WriteInteger('KeyUp2', Game.Settings.Keys[ks1].KeyUp);
@@ -744,6 +747,7 @@ Begin
   IniPropStorage1.WriteBoolean('SDL_AnalogStick2', Game.Settings.Keys[ks1].UseAnalogStick);
   IniPropStorage1.WriteBoolean('SDL_Hat2', Game.Settings.Keys[ks1].UseHat);
   IniPropStorage1.WriteBoolean('SDL_Hysteresis2', Game.Settings.Keys[ks1].UseHysteresis);
+  IniPropStorage1.WriteBoolean('SDL_DominantAxis2', Game.Settings.Keys[ks1].UseDominantAxis);
   IniPropStorage1.WriteInteger('SDL_MappingVersion2', Game.Settings.Keys[ks1].MappingVersion);
 
   IniPropStorage1.WriteBoolean('ShowFPS', Game.Settings.ShowFPS);

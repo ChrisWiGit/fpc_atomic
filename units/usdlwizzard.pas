@@ -148,7 +148,7 @@ Const
   R_WizWaitDirection = 'waiting for direction …';
   RF_WizAxis = 'axis %d';
   R_WizSameButton = 'This button is already the first action.';
-  R_WizDPadButton = 'The D-Pad is used for the directions.';
+  R_WizDPadButton = 'The D-Pad can not be used for actions, it is only used for the directions.';
   R_WizLive = 'Live view (to test)';
   R_WizBack = '< &Back';
   R_WizNext = '&Next >';

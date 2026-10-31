@@ -143,19 +143,42 @@ Procedure SDL_SticksToKeyEvent(Const OnKeyDown, OnKeyUp: TAtomicKeyEvent);
     result := (abs(d) > t) And (sign(d) = aSign);
   End;
 
+  (*
+   * Diagonal gehaltener Stick: True, wenn die senkrechte Achse gewinnt. Die bisherige Achse behält die Richtung,
+   * bis die andere um DominantAxisMargin stärker ist, sonst würde die Richtung bei 45° hin und her springen.
+   *)
+  Function VerticalWins(mv, mh: Integer; Const Last: TKeyState): Boolean;
+  Begin
+    If (Last.Up Or Last.Down) And Not (Last.Left Or Last.Right) Then Begin
+      result := mh * 100 <= mv * DominantAxisMargin;
+    End
+    Else If (Last.Left Or Last.Right) And Not (Last.Up Or Last.Down) Then Begin
+      result := mv * 100 > mh * DominantAxisMargin;
+    End
+    Else Begin
+      result := mv >= mh;
+    End;
+  End;
+
   Procedure CheckKeys(Keys: TKeySet);
   Var
-    d, h: Integer;
-    up, down, left, right, first, second, hyst: Boolean;
+    d, h, mv, mh: Integer;
+    up, down, left, right, aUp, aDown, aLeft, aRight, first, second, hyst: Boolean;
     gc: TSDL_GameController;
   Begin
     If Not assigned(fsdlJoysticks[keys]) Then exit;
     hyst := fKeys[keys].UseHysteresis;
-    // 1. Ermitteln des Aktuellen "Gedrückt" stati
+    // 1. Ermitteln des Aktuellen "Gedrückt" stati, getrennt nach digital (Steuerkreuz, Hat) und analog (Stick, Achsen)
     up := false;
     down := false;
     left := false;
     right := false;
+    aUp := false;
+    aDown := false;
+    aLeft := false;
+    aRight := false;
+    mv := 0;
+    mh := 0;
     If fsdlJoysticks[keys] Is TSDL_GameController Then Begin
       gc := TSDL_GameController(fsdlJoysticks[keys]);
       up := gc.Button[SDL_CONTROLLER_BUTTON_DPAD_UP];
@@ -165,32 +188,51 @@ Procedure SDL_SticksToKeyEvent(Const OnKeyDown, OnKeyUp: TAtomicKeyEvent);
       If fKeys[keys].UseAnalogStick Then Begin
         // Negative Werte sind oben bzw. links
         d := -gc.Axis[SDL_CONTROLLER_AXIS_LEFTY];
-        up := up Or Deflected(d, 1, LastKeyState[Keys].Up, hyst);
-        down := down Or Deflected(d, -1, LastKeyState[Keys].Down, hyst);
+        aUp := Deflected(d, 1, LastKeyState[Keys].Up, hyst);
+        aDown := Deflected(d, -1, LastKeyState[Keys].Down, hyst);
+        mv := abs(d);
         d := -gc.Axis[SDL_CONTROLLER_AXIS_LEFTX];
-        left := left Or Deflected(d, 1, LastKeyState[Keys].Left, hyst);
-        right := right Or Deflected(d, -1, LastKeyState[Keys].Right, hyst);
+        aLeft := Deflected(d, 1, LastKeyState[Keys].Left, hyst);
+        aRight := Deflected(d, -1, LastKeyState[Keys].Right, hyst);
+        mh := abs(d);
       End;
     End
     Else Begin
       If fKeys[keys].AchsisIndex[0] >= 0 Then Begin
         d := fKeys[keys].AchsisIdle[0] - fsdlJoysticks[keys].Axis[fKeys[keys].AchsisIndex[0]];
-        up := Deflected(d, fKeys[keys].AchsisDirection[0], LastKeyState[Keys].Up, hyst);
-        down := Deflected(d, -fKeys[keys].AchsisDirection[0], LastKeyState[Keys].Down, hyst);
+        aUp := Deflected(d, fKeys[keys].AchsisDirection[0], LastKeyState[Keys].Up, hyst);
+        aDown := Deflected(d, -fKeys[keys].AchsisDirection[0], LastKeyState[Keys].Down, hyst);
+        mv := abs(d);
       End;
       If fKeys[keys].AchsisIndex[1] >= 0 Then Begin
         d := fKeys[keys].AchsisIdle[1] - fsdlJoysticks[keys].Axis[fKeys[keys].AchsisIndex[1]];
-        left := Deflected(d, fKeys[keys].AchsisDirection[1], LastKeyState[Keys].Left, hyst);
-        right := Deflected(d, -fKeys[keys].AchsisDirection[1], LastKeyState[Keys].Right, hyst);
+        aLeft := Deflected(d, fKeys[keys].AchsisDirection[1], LastKeyState[Keys].Left, hyst);
+        aRight := Deflected(d, -fKeys[keys].AchsisDirection[1], LastKeyState[Keys].Right, hyst);
+        mh := abs(d);
       End;
       If fKeys[keys].UseHat And (fsdlJoysticks[keys].HatCount > 0) Then Begin
         h := fsdlJoysticks[keys].Hat[0];
-        up := up Or ((h And SDL_HAT_UP) <> 0);
-        down := down Or ((h And SDL_HAT_DOWN) <> 0);
-        left := left Or ((h And SDL_HAT_LEFT) <> 0);
-        right := right Or ((h And SDL_HAT_RIGHT) <> 0);
+        up := (h And SDL_HAT_UP) <> 0;
+        down := (h And SDL_HAT_DOWN) <> 0;
+        left := (h And SDL_HAT_LEFT) <> 0;
+        right := (h And SDL_HAT_RIGHT) <> 0;
       End;
     End;
+    // Diagonal gehaltener Stick: nur die stärkere Achse zählt, sonst gewinnt die zuletzt über die Schwelle gegangene Richtung
+    If fKeys[keys].UseDominantAxis And (aUp Or aDown) And (aLeft Or aRight) Then Begin
+      If VerticalWins(mv, mh, LastKeyState[Keys]) Then Begin
+        aLeft := false;
+        aRight := false;
+      End
+      Else Begin
+        aUp := false;
+        aDown := false;
+      End;
+    End;
+    up := up Or aUp;
+    down := down Or aDown;
+    left := left Or aLeft;
+    right := right Or aRight;
     // Gedrückt ist ein Button, sobald er nicht mehr im Ruhezustand ist
     first := fKeys[keys].ButtonsIdle[0] <> fsdlJoysticks[keys].Button[fKeys[keys].ButtonIndex[0]];
     second := fKeys[keys].ButtonsIdle[1] <> fsdlJoysticks[keys].Button[fKeys[keys].ButtonIndex[1]];
